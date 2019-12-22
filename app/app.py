@@ -23,6 +23,8 @@ winning_combinations = {
     5:[1,3]
     }
 
+running_scoreboard = []
+
 def get_choice(id):
     choice_json = {}
     choice_json["id"] = id
@@ -63,6 +65,19 @@ def choice():
     response.mimetype='application/json'
     return response
 
+@app.route("/scoreboard", methods=['GET'])
+def scoreboard():
+    response = app.make_response(json.dumps(running_scoreboard))
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.mimetype='application/json'
+    return response
+
+def add_to_scoreboard(game_result):
+    if len(running_scoreboard) == 10:
+        running_scoreboard.pop()
+    running_scoreboard.insert(0,game_result)
+    return
+
 @app.route("/play", methods=['POST'])
 def play():
     player_choice = request.get_json()["player"]
@@ -70,19 +85,25 @@ def play():
     player_winning_choices = winning_combinations[player_choice]
     computer_winning_choices = winning_combinations[computer_choice]
     if player_choice == computer_choice:
-        response = app.make_response(json.dumps({"results":"tie","player":player_choice,"computer":computer_choice}))
+        game_result = {"results":"tie","player":player_choice,"computer":computer_choice}
+        add_to_scoreboard(game_result)
+        response = app.make_response(json.dumps(game_result))
         response.headers['Access-Control-Allow-Origin'] = '*'
         response.mimetype='application/json'
         return response
     for player_winning_choice in player_winning_choices:
         if player_winning_choice == computer_choice:
-            response = app.make_response(json.dumps({"results":"win","player":player_choice,"computer":computer_choice}))
+            game_result = {"results":"win","player":player_choice,"computer":computer_choice}
+            add_to_scoreboard(game_result)
+            response = app.make_response(json.dumps(game_result))
             response.headers['Access-Control-Allow-Origin'] = '*'
             response.mimetype='application/json'
             return response
     for computer_winning_choice in computer_winning_choices:
         if player_choice == computer_winning_choice:
-            response = app.make_response(json.dumps({"results":"lose","player":player_choice,"computer":computer_choice}))
+            game_result = {"results":"lose","player":player_choice,"computer":computer_choice}
+            add_to_scoreboard(game_result)
+            response = app.make_response(json.dumps(game_result))
             response.headers['Access-Control-Allow-Origin'] = '*'
             response.mimetype='application/json'
             return response
