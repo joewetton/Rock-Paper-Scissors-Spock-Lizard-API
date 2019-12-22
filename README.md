@@ -1,6 +1,6 @@
 # Rock Paper Scissors Spock Lizard API
 About
-- This is a Docker containerized Flask python based API for the game "Rock Paper Scissors Spock Lizard", it conforms to the following rules. http://www.samkass.com/theories/RPSSL.html.
+- This is a Docker containerized Flask python based API for the game "Rock Paper Scissors Spock Lizard", it conforms to the following rules - http://www.samkass.com/theories/RPSSL.html.
 
 Installation
 - Download Docker
