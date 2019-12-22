@@ -2,8 +2,10 @@ from flask import Flask, request
 import requests
 import json
 import math
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 game_choices = {
     1:"rock",
