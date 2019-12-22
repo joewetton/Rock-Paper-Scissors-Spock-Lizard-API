@@ -47,19 +47,19 @@ def choices():
     choices_list = []
     for game_choice in game_choices:
         choices_list.append(get_choice(game_choice))
-    return app.response_class(
-        response=json.dumps(choices_list),
-        status=200,
-        mimetype='application/json'
-    )
+
+    response = app.make_response(json.dumps(choices_list))
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.mimetype='application/json'
+    return response
+    
 
 @app.route("/choice", methods=['GET'])
 def choice():
-    return app.response_class(
-        response=json.dumps(get_choice(random_choice())),
-        status=200,
-        mimetype='application/json'
-    )
+    response = app.make_response(json.dumps(get_choice(random_choice())))
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.mimetype='application/json'
+    return response
 
 @app.route("/play", methods=['POST'])
 def play():
@@ -68,13 +68,22 @@ def play():
     player_winning_choices = winning_combinations[player_choice]
     computer_winning_choices = winning_combinations[computer_choice]
     if player_choice == computer_choice:
-        return {"tie":computer_choice}
+        response = app.make_response(json.dumps({"results":"tie","player":player_choice,"computer":computer_choice}))
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.mimetype='application/json'
+        return response
     for player_winning_choice in player_winning_choices:
         if player_winning_choice == computer_choice:
-            return {"player wins":computer_choice}
+            response = app.make_response(json.dumps({"results":"win","player":player_choice,"computer":computer_choice}))
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.mimetype='application/json'
+            return response
     for computer_winning_choice in computer_winning_choices:
         if player_choice == computer_winning_choice:
-            return {"computer":computer_choice}            
+            response = app.make_response(json.dumps({"results":"lose","player":player_choice,"computer":computer_choice}))
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.mimetype='application/json'
+            return response
 
 if __name__ == '__main__':
     app.run(debug=True,host='0.0.0.0')
