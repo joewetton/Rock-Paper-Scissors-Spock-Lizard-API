@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 import requests
 import json
 import math
@@ -13,8 +13,15 @@ game_choices = {
     5:"spock"
     }
 
+winning_combinations = {
+    1:[3,4],
+    2:[1,5],
+    3:[2,4],
+    4:[2,5],
+    5:[1,3]
+    }
+
 def get_choice(id):
-    global game_choices
     choice_json = {}
     choice_json["id"] = id
     choice_json["name"] = game_choices[id]
@@ -54,9 +61,20 @@ def choice():
         mimetype='application/json'
     )
 
-@app.route("/play", methods=['GET'])
+@app.route("/play", methods=['POST'])
 def play():
-    return {"we":"the best MUSIC"}
+    player_choice = request.get_json()["player"]
+    computer_choice = random_choice()
+    player_winning_choices = winning_combinations[player_choice]
+    computer_winning_choices = winning_combinations[computer_choice]
+    if player_choice == computer_choice:
+        return {"tie":computer_choice}
+    for player_winning_choice in player_winning_choices:
+        if player_winning_choice == computer_choice:
+            return {"player wins":computer_choice}
+    for computer_winning_choice in computer_winning_choices:
+        if player_choice == computer_winning_choice:
+            return {"computer":computer_choice}            
 
 if __name__ == '__main__':
     app.run(debug=True,host='0.0.0.0')
