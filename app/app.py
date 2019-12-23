@@ -85,6 +85,16 @@ def scoreboard():
     response.mimetype='application/json'
     return response
 
+# POST /reset_scoreboard clears the running scoreboard
+@app.route("/reset_scoreboard", methods=['POST'])
+def reset_scoreboard():
+    global running_scoreboard
+    running_scoreboard = []
+    response = app.make_response(json.dumps({"Status":"Cleared"}))
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.mimetype='application/json'
+    return response
+
 # Adds outcome of game to running scoreboard, only saves last 10 games played
 # Input: JSON like structure of game outcome
 def add_to_scoreboard(game_result):
